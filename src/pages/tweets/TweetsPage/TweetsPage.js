@@ -17,11 +17,6 @@ function TweetsPage() {
   const [tweets, setTweets] = useState([]);
 
   useEffect(() => {
-    // const fetchTweets = async () => {
-    //   const tweets = await getLatestTweets();
-    //   setTweets(tweets);
-    // };
-    // fetchTweets();
     getLatestTweets().then(tweets => setTweets(tweets));
   }, []);
 

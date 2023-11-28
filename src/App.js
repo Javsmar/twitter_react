@@ -9,7 +9,13 @@ import TweetPage from './pages/tweets/TweetPage';
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+
+      <Route 
+        path="/login" 
+        element={<LoginPage />
+        } 
+      />
+
       <Route
         path="/tweets"
         element={
@@ -18,6 +24,7 @@ function App() {
           </Layout>
         }
       />
+
       <Route
         path="/tweets/:tweetId"
         element={
@@ -26,6 +33,7 @@ function App() {
           </Layout>
         }
       />
+
       <Route
         path="/tweets/new"
         element={
@@ -34,9 +42,11 @@ function App() {
           </Layout>
         }
       />
+
       <Route path="/" element={<Navigate to="/tweets" />} />
       <Route path="/404" element={<div>404 | Not found</div>} />
       <Route path="*" element={<Navigate to="/404" />} />
+
     </Routes>
   );
 }
