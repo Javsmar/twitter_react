@@ -10,39 +10,14 @@ function App() {
   return (
     <Routes>
 
-      <Route 
-        path="/login" 
-        element={<LoginPage />
-        } 
-      />
+      <Route path="/login" element={<LoginPage />} />
 
-      <Route
-        path="/tweets"
-        element={
-          <Layout>
-            <TweetsPage />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/tweets/:tweetId"
-        element={
-          <Layout>
-            <TweetPage />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/tweets/new"
-        element={
-          <Layout>
-            <NewTweetPage />
-          </Layout>
-        }
-      />
-
+      <Route path="/tweets" element={<Layout />} >
+        <Route index element={<TweetsPage />} />
+        <Route path=":tweetId" element={ <TweetPage /> } />
+        <Route path="new" element={ <NewTweetPage /> } />
+      </ Route>
+      
       <Route path="/" element={<Navigate to="/tweets" />} />
       <Route path="/404" element={<div>404 | Not found</div>} />
       <Route path="*" element={<Navigate to="/404" />} />
