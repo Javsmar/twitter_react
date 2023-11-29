@@ -5,6 +5,7 @@ import { login } from '../service';
 import { useAuth } from '../context';
 
 import './LoginPage.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const { onLogin } = useAuth();
@@ -12,6 +13,8 @@ function LoginPage() {
     username: '',
     password: '',
   });
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -19,6 +22,9 @@ function LoginPage() {
     await login(credentials);
 
     onLogin();
+
+    const to = location?.state?.from?.pathname || '/';
+    navigate(to);
   };
 
   const handleChange = event => {

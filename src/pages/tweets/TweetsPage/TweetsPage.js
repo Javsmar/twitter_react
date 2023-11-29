@@ -5,6 +5,7 @@ import Content from '../../../components/layout/Content';
 import Tweet from '../components/Tweet';
 
 import './TweetsPage.css';
+import { Link } from 'react-router-dom';
 
 const EmptyList = () => (
   <div className="tweetsPage-empty">
@@ -27,7 +28,9 @@ function TweetsPage() {
           <ul>
             {tweets.map(({ id, ...tweet }) => (
               <li key={id}>
-                <Tweet {...tweet} />
+                <Link to={`${id}`}>
+                  <Tweet {...tweet} />
+                </Link>
               </li>
             ))}
           </ul>
