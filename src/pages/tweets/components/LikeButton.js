@@ -1,19 +1,20 @@
-import React from 'react';
-import clsx from 'clsx';
+import React from "react";
+import PropTypes from 'prop-types';
+import clsx from "clsx";
 
-import { ReactComponent as IconNotLiked } from '../../../assets/not-liked.svg';
-import { ReactComponent as IconLiked } from '../../../assets/liked.svg';
-import './LikeButton.css';
+import { ReactComponent as IconNotLiked } from "../../../assets/not-liked.svg";
+import { ReactComponent as IconLiked } from "../../../assets/liked.svg";
+import "./LikeButton.css";
 
 const LikeButton = ({ likes, isLike, onLike }) => {
   const Icon = isLike ? IconLiked : IconNotLiked;
 
   return (
     <div
-      className={clsx('likeButton', {
-        'likeButton--active': isLike,
+      className={clsx("likeButton", {
+        "likeButton--active": isLike,
       })}
-      onClick={event => {
+      onClick={(event) => {
         event.preventDefault();
         onLike(event);
       }}
@@ -24,6 +25,16 @@ const LikeButton = ({ likes, isLike, onLike }) => {
       <span className="likeButton-label">{likes}</span>
     </div>
   );
+};
+
+LikeButton.propTypes = {
+  likes: PropTypes.number.isRequired,
+  isLike: PropTypes.bool,
+  onLike: PropTypes.func.isRequired,
+};
+
+LikeButton.defaultProps = {
+  isLike: false,
 };
 
 export default LikeButton;
