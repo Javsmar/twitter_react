@@ -1,108 +1,148 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Content from "../../../components/layout/Content";
-import Button from "../../../components/shared/Button";
-import Photo from "../../../components/shared/Photo";
-import Textarea from "../../../components/shared/Textarea";
+import PropTypes from 'prop-types';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Content from '../../../components/layout/Content';
+import Button from '../../../components/shared/Button';
+import Photo from '../../../components/shared/Photo';
+import Textarea from '../../../components/shared/Textarea';
 
-import "./NewTweetPage.css";
-import { createTweet } from "../service";
-import { useNavigate } from "react-router-dom";
-
+import './NewTweetPage.css';
+import { createTweet } from '../service';
+import { useNavigate } from 'react-router';
 
 const MIN_CHARACTERS = 5;
-const MAX_CHARACTERS = 150;
+const MAX_CHARACTERS = 140;
 
-const fibonacci = (n) => {
-  if(n <= 1 ) return n;
-  return fibonacci(n - 1 ) + fibonacci( n - 2 );
+const fibonacci = n => {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
 };
 
 const HeavyComponent = ({ value }) => {
-  const result = useMemo(() => fibonacci(value), [value])
-  return <div>
+  const result = fibonacci(value);
+  return (
+    <div>
       <code>
         Fibonacci({value}) = {result}
       </code>
     </div>
+  );
 };
 
+HeavyComponent.propTypes = {
+  value: PropTypes.number.isRequired,
+};
+
+// const MemoHeavyComponent = memo(HeavyComponent, (p, n) => {
+//   console.log('props', p, n);
+//   return p.value === n.value;
+// });
+
+// const MemoHeavyComponent = memo(HeavyComponent);
 const MemoHeavyComponent = HeavyComponent;
 
+function NewTweetPageForm({ isFetching, onSubmit }) {
+  const [content, setContent] = useState('');
+  const textareaRef = useRef(null);
+
+  const handleChange = event => {
+    setContent(event.target.value);
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    onSubmit(content);
+  };
+
+  const characters = `${content.length} / ${MAX_CHARACTERS}`;
+  const buttonDisabled = content.length <= MIN_CHARACTERS || isFetching;
+
+  // useEffect(() => {
+  //   console.log('textarea', textareaRef);
+  //   textareaRef.current.focus();
+  // });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Textarea
+        className="newTweetPage-textarea"
+        placeholder="Hey! What's up!"
+        value={content}
+        onChange={handleChange}
+        maxLength={MAX_CHARACTERS}
+        ref={textareaRef}
+      />
+      <div className="newTweetPage-footer">
+        <span className="newTweetPage-characters">{characters}</span>
+        <Button
+          type="submit"
+          className="newTweetPage-submit"
+          $variant="primary"
+          disabled={buttonDisabled}
+        >
+          Let's go!
+        </Button>
+      </div>
+    </form>
+  );
+}
+
 function NewTweetPage() {
-  const [content, setContent] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
   const counterRef = useRef(0);
   const formRef = useRef(null);
+  const divRef = useRef(null);
+
+  // { current: null }
 
   useEffect(() => {
     counterRef.current++;
-    console.log(counterRef.current)
   });
 
   useEffect(() => {
     console.log(formRef);
   }, []);
 
-  const handleChange = (event) => {
-    setContent(event.target.value);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async content => {
     try {
       setIsFetching(true);
       const tweet = await createTweet({ content });
-      navigate(`../${tweet.id}`, { relative: "path" });
+      navigate(`../${tweet.id}`, { relative: 'path' });
     } catch (error) {
       if (error.status === 401) {
-        navigate("/login");
+        navigate('/login');
+      } else {
+        setIsFetching(false);
+        // Show errorMemoHeavyComponent
       }
     }
   };
-
-  const characters = `${content.length} / ${MAX_CHARACTERS}`;
-  const buttonDisable = content.length <= MIN_CHARACTERS || isFetching;
 
   const callback = useCallback(() => {}, []);
   const object = useMemo(() => ({}), []);
 
   return (
     <Content title="What are you thinking?">
-      <div className="newTweetPage">
+      <div
+        className="newTweetPage"
+        ref={element => {
+          console.log(element);
+          divRef.current = element;
+        }}
+      >
         <div className="left">
           <Photo />
         </div>
         <div className="right">
-          <form onSubmit={handleSubmit} ref={formRef}>
-            <Textarea
-              className="newTweetPage-textarea"
-              placeholder="Hey! What's up!"
-              value={content}
-              onChange={handleChange}
-              maxLength={MAX_CHARACTERS}
-            />
-            <div className="newTweetPage-footer">
-              <span className="newTweetPage-characters">{characters}</span>
-              <Button
-                type="submit"
-                className="newTweetPage-submit"
-                $variant="primary"
-                disabled={buttonDisable}
-              >
-                Let's go!
-              </Button>
-            </div>
-          </form>
+          <NewTweetPageForm isFetching={isFetching} onSubmit={handleSubmit} />
         </div>
       </div>
-      <MemoHeavyComponent
-        value={37} 
+      <HeavyComponent
+        value={35}
         callback={callback}
         object={object}
-        array = {[]}
-        />
-        
+        array={[]}
+      />
     </Content>
   );
 }

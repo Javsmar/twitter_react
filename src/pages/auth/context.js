@@ -1,25 +1,32 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 
 const AuthContext = createContext(false);
+const AuthContextHandlers = createContext(undefined);
 
-export const useAuth = () => {
-  const auth = useContext(AuthContext);
+export const useIsLogged = () => {
+  const isLogged = useContext(AuthContext);
+  return isLogged;
+};
+
+export const useAuthHandlers = () => {
+  const auth = useContext(AuthContextHandlers);
   return auth;
 };
 
 export const AuthContextProvider = ({ initiallyLogged, children }) => {
   const [isLogged, setIsLogged] = useState(initiallyLogged);
 
-  const handleLogin = () => setIsLogged(true);
-  const handleLogout = () => setIsLogged(false);
-
-  const authValue = {
-    isLogged,
-    onLogout: handleLogout,
-    onLogin: handleLogin,
-  };
+  const authHandlers = useMemo(
+    () => ({
+      onLogin: () => setIsLogged(true),
+      onLogout: () => setIsLogged(false),
+    }),
+    [],
+  );
 
   return (
-    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
+    <AuthContextHandlers.Provider value={authHandlers}>
+      <AuthContext.Provider value={isLogged}>{children}</AuthContext.Provider>
+    </AuthContextHandlers.Provider>
   );
 };

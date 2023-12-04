@@ -1,42 +1,41 @@
-import { useState } from "react";
-import Button from "../../../components/shared/Button";
-import FormField from "../../../components/shared/FormField";
-import { login } from "../service";
-import { useAuth } from "../context";
+import { useState } from 'react';
+import Button from '../../../components/shared/Button';
+import FormField from '../../../components/shared/FormField';
+import { login } from '../service';
+import { useAuthHandlers } from '../context';
 
-import "./LoginPage.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import './LoginPage.css';
+import { useLocation, useNavigate } from 'react-router';
 
 function LoginPage() {
-  const { onLogin } = useAuth();
+  const { onLogin } = useAuthHandlers();
   const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const [error, setError] = useState(null);
-  const [isfetching, setIsfetching] = useState(false);
-
+  const [isFetching, setIsFeching] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
 
     try {
-      setIsfetching(true);
+      setIsFeching(true);
       await login(credentials);
+      setIsFeching(false);
       onLogin();
-      setIsfetching(false);
-      const to = location?.state?.from?.pathname || "/";
+      const to = location?.state?.from?.pathname || '/';
       navigate(to);
     } catch (error) {
-      setIsfetching(false);
+      setIsFeching(false);
       setError(error);
     }
   };
 
-  const handleChange = (event) => {
-    setCredentials((currentCredentials) => ({
+  const handleChange = event => {
+    setCredentials(currentCredentials => ({
       ...currentCredentials,
       [event.target.name]: event.target.value,
     }));
@@ -47,7 +46,7 @@ function LoginPage() {
   };
 
   const { username, password } = credentials;
-  const buttonDisabled = !(username && password) || isfetching;
+  const buttonDisabled = !(username && password) || isFetching;
 
   return (
     <div className="loginPage">
@@ -75,7 +74,7 @@ function LoginPage() {
           disabled={buttonDisabled}
           className="loginForm-submit"
         >
-          {isfetching ? "Connecting..." : "Log in"}
+          {isFetching ? 'Connecting...' : 'Log in'}
         </Button>
         {error && (
           <div className="loginPage-error" onClick={resetError}>
