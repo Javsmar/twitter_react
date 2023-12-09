@@ -1,24 +1,25 @@
-import { useState } from 'react';
-import Button from '../../../components/shared/Button';
-import FormField from '../../../components/shared/FormField';
-import { login } from '../service';
-import { useAuthHandlers } from '../context';
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import Button from "../../../components/shared/Button";
+import FormField from "../../../components/shared/FormField";
+import { login } from "../service";
+import { useAuthHandlers } from "../context";
 
-import './LoginPage.css';
-import { useLocation, useNavigate } from 'react-router';
+import "./LoginPage.css";
+import { useLocation, useNavigate } from "react-router";
 
 function LoginPage() {
   const { onLogin } = useAuthHandlers();
   const [credentials, setCredentials] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
   const [error, setError] = useState(null);
   const [isFetching, setIsFeching] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
@@ -26,7 +27,7 @@ function LoginPage() {
       await login(credentials);
       setIsFeching(false);
       onLogin();
-      const to = location?.state?.from?.pathname || '/';
+      const to = location?.state?.from?.pathname || "/";
       navigate(to);
     } catch (error) {
       setIsFeching(false);
@@ -34,8 +35,8 @@ function LoginPage() {
     }
   };
 
-  const handleChange = event => {
-    setCredentials(currentCredentials => ({
+  const handleChange = (event) => {
+    setCredentials((currentCredentials) => ({
       ...currentCredentials,
       [event.target.name]: event.target.value,
     }));
@@ -74,7 +75,7 @@ function LoginPage() {
           disabled={buttonDisabled}
           className="loginForm-submit"
         >
-          {isFetching ? 'Connecting...' : 'Log in'}
+          {isFetching ? "Connecting..." : "Log in"}
         </Button>
         {error && (
           <div className="loginPage-error" onClick={resetError}>
@@ -85,5 +86,24 @@ function LoginPage() {
     </div>
   );
 }
+
+// function LoginPagePortal({ count }) {
+//   const portalContainer = useRef(document.createElement('div'));
+
+//   useEffect(() => {
+//     const externalWindow = window.open( 
+//       "",
+//       "",
+//       "width=600, heght=400, left=200, top=200",
+//     );
+//     externalWindow.document.body.appendChild(portalContainer.current);
+
+//     return ()=>{
+//       externalWindow.close()
+//     }
+//   });
+
+//   return createPortal(<LoginPage count={ count }/>, portalContainer.current);
+// }
 
 export default LoginPage;

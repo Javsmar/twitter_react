@@ -19,11 +19,11 @@ root.render(
   <React.StrictMode>
     <ErrorBoundary>
 
-    <BrowserRouter>
-      <AuthContextProvider initiallyLogged={!!accessToken}>
-        <App />
-      </AuthContextProvider>
-    </BrowserRouter>
+      <BrowserRouter>
+        <AuthContextProvider initiallyLogged={!!accessToken}>
+          <App />
+        </AuthContextProvider>
+      </BrowserRouter>
 
     </ErrorBoundary>
   </React.StrictMode>,
